@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 
+add_subdirectory(ipc)
 add_subdirectory(hardware)
 add_subdirectory(util)
-add_subdirectory(ipc)
 add_subdirectory(controller)
 
 # Build flyMS_lib

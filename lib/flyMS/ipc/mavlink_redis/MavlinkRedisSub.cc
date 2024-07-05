@@ -10,7 +10,7 @@
  *
  */
 
-#include "flyMS/ipc/mavlink/MavlinkRedisSub.h"
+#include "flyMS/ipc/mavlink_redis/MavlinkRedisSub.h"
 
 namespace flyMS {
 

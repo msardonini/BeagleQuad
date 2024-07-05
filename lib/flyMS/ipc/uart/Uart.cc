@@ -1,4 +1,4 @@
-#include "flyMS/ipc/uart/Uart.h"
+#include "Uart.h"
 
 #include <fcntl.h>
 #include <termios.h>

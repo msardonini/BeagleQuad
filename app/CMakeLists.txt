@@ -23,11 +23,10 @@ add_executable(mission_interface
 target_link_libraries(mission_interface
   PRIVATE
     flyMS_lib
-    redis++_static
+    flyMS_ipc
 )
 
 set_target_properties(flyMS test_webserver mission_interface
   PROPERTIES
   LINK_FLAGS "-static-libstdc++ -static-libgcc"
-  # LINK_FLAGS "-static"
 )

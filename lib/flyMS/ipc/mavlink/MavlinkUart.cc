@@ -1,4 +1,4 @@
-#include "flyMS/ipc/mavlink/MavlinkUart.h"
+#include "MavlinkUart.h"
 
 #include <fcntl.h>
 #include <termios.h>

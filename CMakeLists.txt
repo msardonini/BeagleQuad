@@ -9,6 +9,7 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 option(CROSS_COMPILE "Cross compile" ON)
 option(FLYMS_BUILD_TESTS "Build tests" OFF)
 option(CODE_COVERAGE "Build unit tests with code coverage" OFF)
+option(BUILD_DOCS "Build documentation" ON)
 
 # # Get the architecture of the CPU building this
 EXECUTE_PROCESS(COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE)
@@ -64,4 +65,6 @@ add_subdirectory(lib)
 
 add_subdirectory(app)
 
-add_subdirectory(docs)
+if (BUILD_DOCS)
+  add_subdirectory(docs)
+endif()

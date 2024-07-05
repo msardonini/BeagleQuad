@@ -15,9 +15,9 @@
 #include <iostream>
 #include <thread>
 
-#include "flyMS/ipc/mavlink/MavlinkRedisPub.h"
-#include "flyMS/ipc/mavlink/MavlinkRedisSub.h"
 #include "flyMS/ipc/mavlink/MavlinkUart.h"
+#include "flyMS/ipc/mavlink_redis/MavlinkRedisPub.h"
+#include "flyMS/ipc/mavlink_redis/MavlinkRedisSub.h"
 
 static constexpr char kMAVLINK_FLIGHT_CORE_CHANNEL[] = "mission_mavlink_data";
 static constexpr char kMAVLINK_WEBSERVER_CHANNEL[] = "webserver_mavlink_data";

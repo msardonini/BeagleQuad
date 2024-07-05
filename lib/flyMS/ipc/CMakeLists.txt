@@ -1,30 +1,42 @@
+cmake_minimum_required(VERSION 3.5)
+
+set(CMAKE_CXX_STANDARD 20)
+
+if (NOT TARGET spdlog)
+  add_subdirectory(external)
+endif()
 
 
-add_library(flyMS_ipc STATIC
-  redis/RedisSubscriber.cc
-  mavlink/MavlinkRedisSub.cc
-  mavlink/MavlinkUart.cc
-  uart/Uart.cc
-)
+# check if FLYMS_LIBRARY_ROOT is set
+if(NOT DEFINED FLYMS_LIBRARY_ROOT)
+  set(FLYMS_LIBRARY_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/..)
+endif()
+
+add_subdirectory(uart)
+add_subdirectory(mavlink)
+add_subdirectory(redis)
+add_subdirectory(mavlink_redis)
+
+add_library(flyMS_ipc INTERFACE)
 
 target_link_libraries(flyMS_ipc
-  PUBLIC
-    spdlog
-    robotics_cape
-    redis++_static
-    mavlink_v2
-    yaml-cpp
+  INTERFACE
+    flyMS_mavlink
+    flyMS_uart
+    flyMS_redis
+    # redis++_static
+    flyMS_mavlink_redis
 )
 
 target_include_directories(flyMS_ipc
-  PUBLIC
+  INTERFACE
     ${FLYMS_LIBRARY_ROOT}
 )
 
 # Build with DEBUG defined if we are in Debug mode
 if (CMAKE_BUILD_TYPE MATCHES Debug)
   target_compile_definitions(flyMS_ipc
-    PUBLIC
+    INTERFACE
       -DDEBUG_FLYMS
     )
 endif()
