@@ -24,8 +24,8 @@ PositionController::PositionController(std::array<std::array<double, 3>, 2> pid_
                                        std::array<float, 3> RPY_saturation_limits) {
   for (int i = 0; i < 2; i++) {
     pid_[0][i] = generate_pid(pid_coeffs_x[i], 0.15, kFLYMS_CONTROL_LOOP_DT);
-    pid_[0][i] = generate_pid(pid_coeffs_y[i], 0.15, kFLYMS_CONTROL_LOOP_DT);
-    pid_[0][i] = generate_pid(pid_coeffs_z[i], 0.15, kFLYMS_CONTROL_LOOP_DT);
+    pid_[1][i] = generate_pid(pid_coeffs_y[i], 0.15, kFLYMS_CONTROL_LOOP_DT);
+    pid_[2][i] = generate_pid(pid_coeffs_z[i], 0.15, kFLYMS_CONTROL_LOOP_DT);
   }
 
   // Conversion matrix to map roll, pitch, throttle commands from PID output in XYZ frame
@@ -36,6 +36,8 @@ PositionController::PositionController(std::array<std::array<double, 3>, 2> pid_
   setpoint_velocity_ = Eigen::Vector3f::Zero();
   setpoint_orientation_ = Eigen::Vector3f::Zero();
   RPY_saturation_limits_ = RPY_saturation_limits;
+
+  output_mutex_ = std::make_unique<std::mutex>();
 }
 
 PositionController::PositionController(const YAML::Node &config_params)

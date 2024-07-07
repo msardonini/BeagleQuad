@@ -39,7 +39,7 @@ namespace flyMS {
  * }
  * @endcode
  */
-class MavlinkRedisSub : public RedisSubscriber, public MavlinkParser {
+class MavlinkRedisSub : public MavlinkParser, public RedisSubscriber {
  public:
   /**
    * @brief Construct a new Redis Interface object
@@ -51,7 +51,7 @@ class MavlinkRedisSub : public RedisSubscriber, public MavlinkParser {
    * @brief Destroy the Redis Interface object
    *
    */
-  ~MavlinkRedisSub();
+  virtual ~MavlinkRedisSub() = default;
 
  private:
   /**

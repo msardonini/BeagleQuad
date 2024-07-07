@@ -61,7 +61,7 @@ class RedisSubscriber {
    * @brief Destroy the RedisSubscriber object
    *
    */
-  ~RedisSubscriber();
+  virtual ~RedisSubscriber();
 
   /**
    * @brief Set the error callback function. This function will be called if the internal redis++ subscriber throws an

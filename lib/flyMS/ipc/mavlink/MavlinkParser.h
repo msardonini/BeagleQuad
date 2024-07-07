@@ -108,6 +108,8 @@ struct MavlinkMsgDecodeHelper : MavlinkMsgDecodeHelperBase {
  */
 class MavlinkParser {
  public:
+  virtual ~MavlinkParser() = default;
+
   /**
    * @brief Registers a custom message type with this parser. A message cannot be parsed until it is registered. When a
    * message gets parsed, the callback function will be called with the decoded message.

@@ -50,7 +50,7 @@ bool FlightCore::init() {
 
   // TODO: improve the logic to decide whether to initialize the object or not
   if (config_params_["mavlink_interface"]["enable"].as<bool>()) {
-    mavlink_subscriber_ = std::make_unique<MavlinkRedisSubQueue>(kFLY_STEREO_CHANNEL);
+    mavlink_subscriber_ = std::make_unique<MavlinkRedisSubQueue>(kFLY_STEREO_CHANNEL_IN);
     odometry_queue_ = mavlink_subscriber_->register_message_with_queue<mavlink_odometry_t, MAVLINK_MSG_ID_ODOMETRY>(
         &mavlink_msg_odometry_decode);
     mavlink_publisher_ = std::make_unique<MavlinkRedisPub>();
@@ -180,7 +180,7 @@ void FlightCore::flight_core(StateData &imu_data_body) {
 
     mavlink_command_int_t command_int;
     command_int.command = MAV_CMD_NAV_GUIDED_ENABLE;
-    mavlink_publisher_->publish<mavlink_command_int_t>(kFLY_STEREO_CHANNEL, command_int,
+    mavlink_publisher_->publish<mavlink_command_int_t>(kFLY_STEREO_CHANNEL_OUT, command_int,
                                                        &mavlink_msg_command_int_encode);
   } else if (flyStereo_running_ && remote_data[kFLYMS_FLIGHT_MODE_INDEX] < 0.5) {
     spdlog::info("Turning off flyStereo!");
@@ -189,7 +189,7 @@ void FlightCore::flight_core(StateData &imu_data_body) {
 
     mavlink_command_int_t command_int;
     command_int.command = MAV_CMD_NAV_RETURN_TO_LAUNCH;
-    mavlink_publisher_->publish<mavlink_command_int_t>(kFLY_STEREO_CHANNEL, command_int,
+    mavlink_publisher_->publish<mavlink_command_int_t>(kFLY_STEREO_CHANNEL_OUT, command_int,
                                                        &mavlink_msg_command_int_encode);
   }
 

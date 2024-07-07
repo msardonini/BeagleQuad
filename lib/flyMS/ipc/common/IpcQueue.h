@@ -5,6 +5,8 @@
 
 #include "spdlog/spdlog.h"
 
+namespace flyMS {
+
 /**
  * @brief A thread-safe queue to use as an intermediate receiving container
  *
@@ -16,7 +18,8 @@ struct IpcQueue {
   /**
    * @brief Construct a new Ipc Queue object
    *
-   * @param max_queue_size The maximum number of elements to store in the queue. The default is 0, which means no limit
+   * @param max_queue_size The maximum number of elements to store in the queue. The default is 0, which means no
+   * limit
    */
   IpcQueue(std::size_t max_queue_size = 0) : max_queue_size_(max_queue_size) {}
 
@@ -87,3 +90,4 @@ struct IpcQueue {
   std::mutex mutex_;
   std::queue<MsgType> queue_;
 };
+}  // namespace flyMS

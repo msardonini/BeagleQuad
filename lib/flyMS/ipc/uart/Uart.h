@@ -32,6 +32,8 @@ class Uart {
   Uart(const std::filesystem::path& serial_dev,
        std::function<void(const std::array<uint8_t, kBUF_SIZE>&, size_t)> callback);
 
+  virtual ~Uart() = default;
+
   /**
    * @brief Send data over the UART port
    *

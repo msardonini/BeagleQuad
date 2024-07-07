@@ -19,7 +19,8 @@
 #include "flyMS/ipc/mavlink_redis/MavlinkRedisPub.h"
 #include "flyMS/ipc/mavlink_redis/MavlinkRedisSub.h"
 
-static constexpr char kMAVLINK_FLIGHT_CORE_CHANNEL[] = "mission_mavlink_data";
+static constexpr char kMAVLINK_FLIGHT_CORE_CHANNEL_OUT[] = "mission_mavlink_data_out";
+static constexpr char kMAVLINK_FLIGHT_CORE_CHANNEL_IN[] = "mission_mavlink_data_in";
 static constexpr char kMAVLINK_WEBSERVER_CHANNEL[] = "webserver_mavlink_data";
 static constexpr char kSERIAL_PORT[] = "/dev/ttyS5";
 std::atomic<bool> is_running_{true};
@@ -46,18 +47,18 @@ int main() {
 
   flyMS::MavlinkUart mav_uart(kSERIAL_PORT);
   flyMS::MavlinkRedisPub mav_pub;
-  flyMS::MavlinkRedisSub mav_sub(kMAVLINK_FLIGHT_CORE_CHANNEL);
+  flyMS::MavlinkRedisSub mav_sub(kMAVLINK_FLIGHT_CORE_CHANNEL_OUT);
 
   // Heartbeat messages from the Mission Computer get sent to the Redis channel
   auto heartbeat_msg_callback = [&mav_pub](auto& msg) {
-    mav_pub.publish<mavlink_heartbeat_t>(kMAVLINK_FLIGHT_CORE_CHANNEL, msg, &mavlink_msg_heartbeat_encode);
+    mav_pub.publish<mavlink_heartbeat_t>(kMAVLINK_FLIGHT_CORE_CHANNEL_IN, msg, &mavlink_msg_heartbeat_encode);
   };
   mav_uart.register_message<mavlink_heartbeat_t, MAVLINK_MSG_ID_HEARTBEAT>(heartbeat_msg_callback,
                                                                            &mavlink_msg_heartbeat_decode);
 
   // Odometry messages from the Mission Computer get sent to the Redis channel
   auto odom_msg_callback = [&mav_pub](auto& msg) {
-    mav_pub.publish<mavlink_odometry_t>(kMAVLINK_FLIGHT_CORE_CHANNEL, msg, &mavlink_msg_odometry_encode);
+    mav_pub.publish<mavlink_odometry_t>(kMAVLINK_FLIGHT_CORE_CHANNEL_IN, msg, &mavlink_msg_odometry_encode);
   };
   mav_uart.register_message<mavlink_odometry_t, MAVLINK_MSG_ID_ODOMETRY>(odom_msg_callback,
                                                                          &mavlink_msg_odometry_decode);

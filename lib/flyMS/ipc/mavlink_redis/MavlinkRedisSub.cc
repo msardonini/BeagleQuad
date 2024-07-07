@@ -19,8 +19,6 @@ MavlinkRedisSub::MavlinkRedisSub(const std::string &channel)
           std::bind(&MavlinkRedisSub::MavlinkMessageCallback, this, std::placeholders::_1, std::placeholders::_2),
           {channel}) {}
 
-MavlinkRedisSub::~MavlinkRedisSub() {}
-
 void MavlinkRedisSub::MavlinkMessageCallback(std::string channel, std::string msg) {
   for (auto mav_char : msg) {
     mavlink_message_t mav_msg;

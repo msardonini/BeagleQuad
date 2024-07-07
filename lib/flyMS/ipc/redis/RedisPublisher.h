@@ -39,6 +39,8 @@ class RedisPublisher {
    */
   RedisPublisher() : redis_(std::make_unique<sw::redis::Redis>(redis_default_connection_opts())) {}
 
+  virtual ~RedisPublisher() = default;
+
   /**
    * @brief Publish a message to a redis channel
    *
