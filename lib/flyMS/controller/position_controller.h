@@ -14,7 +14,6 @@
 #include <mutex>
 
 #include "Eigen/Dense"
-#include "flyMS/common/vio_data.h"
 #include "flyMS/controller/DigitalFilter.h"
 #include "mavlink_v2/common/mavlink.h"
 #include "yaml-cpp/yaml.h"

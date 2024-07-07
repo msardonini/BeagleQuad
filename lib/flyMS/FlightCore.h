@@ -137,9 +137,9 @@ class FlightCore {
   DigitalFilter gyro_lpf_roll_;             //< Low pass filter for imu roll measurement
   DigitalFilter gyro_lpf_yaw_;              //< Low pass filter for imu yaw measurement
 
-  std::unique_ptr<MavlinkRedisSubQueue> mavlink_subscriber_;        //< Receive mavlink messages from Redis
-  std::unique_ptr<MavlinkRedisPub> mavlink_publisher_;              //< Publish mavlink messages from Redis
-  std::shared_ptr<RedisQueue<mavlink_odometry_t>> odometry_queue_;  //< A shared queue to receive odometry data
+  std::unique_ptr<MavlinkRedisSubQueue> mavlink_subscriber_;      //< Receive mavlink messages from Redis
+  std::unique_ptr<MavlinkRedisPub> mavlink_publisher_;            //< Publish mavlink messages from Redis
+  std::shared_ptr<IpcQueue<mavlink_odometry_t>> odometry_queue_;  //< A shared queue to receive odometry data
 };
 
 }  // namespace flyMS

@@ -1,6 +1,6 @@
-#include "flyMS/ipc/mavlink/MavlinkRedisPub.h"
-#include "flyMS/ipc/mavlink/MavlinkRedisSub.h"
-#include "flyMS/ipc/mavlink/MavlinkRedisSubQueue.h"
+#include "flyMS/ipc/mavlink_redis/MavlinkRedisPub.h"
+#include "flyMS/ipc/mavlink_redis/MavlinkRedisSub.h"
+#include "flyMS/ipc/mavlink_redis/MavlinkRedisSubQueue.h"
 #include "gtest/gtest.h"
 
 constexpr auto kREDIS_TIMEOUT = std::chrono::seconds(10);

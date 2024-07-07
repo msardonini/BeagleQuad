@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <thread>
 
+#include "flyMS/ipc/common/IpcQueue.h"
 #include "flyMS/ipc/mavlink/MavlinkParser.h"
 #include "flyMS/ipc/uart/Uart.h"
 
@@ -29,6 +30,24 @@ class MavlinkUart : public MavlinkParser, private Uart {
     std::vector<uint8_t> bytes(size);
     mavlink_msg_to_send_buffer(bytes.data(), &mav_message);
     send(bytes);
+  }
+
+  /**
+   * @brief Register a message to be parsed by incoming mavlink messages via UART, and have the messages stored in a
+   * thread safe queue when they are received
+   *
+   * @tparam MavType The type of the mavlink message to parse
+   * @tparam MsgId The id of the mavlink message to parse
+   * @param decode The decode function for the mavlink message
+   * @return std::shared_ptr<IpcQueue<MavType>>
+   */
+  template <typename MavType, uint32_t MsgId>
+  std::shared_ptr<IpcQueue<MavType>> register_message_with_queue(
+      std::function<void(const mavlink_message_t*, mavlink_odometry_t*)> decode) {
+    auto queue = std::make_shared<IpcQueue<MavType>>();
+    auto callback = [queue](auto& msg) { queue->push(msg); };
+    register_message<MavType, MsgId>(callback, decode);
+    return queue;
   }
 
  private:

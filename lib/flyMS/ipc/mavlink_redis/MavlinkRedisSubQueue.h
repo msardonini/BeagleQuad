@@ -39,12 +39,12 @@ class MavlinkRedisSubQueue : public MavlinkRedisSub {
    * @tparam MavType The type of the mavlink message to parse
    * @tparam MsgId The id of the mavlink message to parse
    * @param decode The decode function for the mavlink message
-   * @return std::shared_ptr<RedisQueue<MavType>>
+   * @return std::shared_ptr<IpcQueue<MavType>>
    */
   template <typename MavType, uint32_t MsgId>
-  std::shared_ptr<RedisQueue<MavType>> register_message_with_queue(
+  std::shared_ptr<IpcQueue<MavType>> register_message_with_queue(
       std::function<void(const mavlink_message_t*, mavlink_odometry_t*)> decode) {
-    auto queue = std::make_shared<RedisQueue<MavType>>();
+    auto queue = std::make_shared<IpcQueue<MavType>>();
     auto callback = [queue](auto& msg) { queue->push(msg); };
     register_message<MavType, MsgId>(callback, decode);
     return queue;
