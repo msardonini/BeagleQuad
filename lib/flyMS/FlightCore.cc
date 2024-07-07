@@ -105,6 +105,26 @@ void FlightCore::flight_core(StateData &imu_data_body) {
   // Calculate controller setpoints
   auto setpoints = setpoint_module_.calculate_setpoint_data(remote_data);
 
+  // Override setpoints with Position controller if enabled
+  if (flyStereo_running_ && !odometry_queue_->empty()) {
+    if (flyStereo_streaming_data_ == false) {
+      standing_throttle_ = setpoints.throttle();
+      flyStereo_streaming_data_ = true;
+    }
+
+    auto odom_data = odometry_queue_->pop_front();
+
+    position_controller_.ReceiveVio(odom_data);
+    auto [setpoint, yaw_vio] = position_controller_.GetSetpoint();
+
+    // Only set the throttle for now
+    setpoints.throttle() = setpoint(2);
+
+    // print some debug mesasges for now
+    spdlog::info("odom data: x: {:2.2f}, y: {:2.2f}, z: {:2.2f}", odom_data.x, odom_data.y, odom_data.z);
+    spdlog::info("setpoint: x: {:2.2f}, y: {:2.2f}, z: {:2.2f}", setpoint(0), setpoint(1), setpoint(2));
+  }
+
   // If landed for 2 seconds, reset integrators and Yaw error
   if (remote_data[kFLYMS_THROTTLE_INDEX] < -0.98) {
     integrator_reset_++;
@@ -165,6 +185,7 @@ void FlightCore::flight_core(StateData &imu_data_body) {
   } else if (flyStereo_running_ && remote_data[kFLYMS_FLIGHT_MODE_INDEX] < 0.5) {
     spdlog::info("Turning off flyStereo!");
     flyStereo_running_ = false;
+    flyStereo_streaming_data_ = false;
 
     mavlink_command_int_t command_int;
     command_int.command = MAV_CMD_NAV_RETURN_TO_LAUNCH;

@@ -11,6 +11,7 @@ PUBLIC
   spdlog
   eigen
   yaml-cpp
+  flyMS_ipc
 )
 
 target_include_directories(flyMS_controller

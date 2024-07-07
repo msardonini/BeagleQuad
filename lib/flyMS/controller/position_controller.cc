@@ -35,6 +35,7 @@ PositionController::PositionController(std::array<std::array<double, 3>, 2> pid_
   setpoint_position_ = Eigen::Vector3f::Zero();
   setpoint_velocity_ = Eigen::Vector3f::Zero();
   setpoint_orientation_ = Eigen::Vector3f::Zero();
+  RPY_saturation_limits_ = RPY_saturation_limits;
 }
 
 PositionController::PositionController(const YAML::Node &config_params)
@@ -48,19 +49,24 @@ PositionController::PositionController(const YAML::Node &config_params)
 
 PositionController::~PositionController() {}
 
-void PositionController::ReceiveVio(const VioData &vio) {
+void PositionController::ReceiveVio(const mavlink_odometry_t &vio) {
   Eigen::Vector3f setpoint_orientation_xyz;
-  // Calculate the PIDs for the outer and inner loops on XYZ axis
-  for (int i = 0; i < 3; i++) {
-    setpoint_velocity_[i] = pid_[i][0].update_filter(setpoint_position_[i] - vio.position[i]);
-    setpoint_orientation_xyz(i) = pid_[i][1].update_filter(setpoint_velocity_(i) - vio.velocity(i));
-  }
+  // Calculate the PIDs for the outer and inner loops on XYZ axis;
+  setpoint_velocity_[0] = pid_[0][0].update_filter(setpoint_position_[0] - vio.x);
+  setpoint_velocity_[1] = pid_[1][0].update_filter(setpoint_position_[1] - vio.y);
+  setpoint_velocity_[2] = pid_[2][0].update_filter(setpoint_position_[2] - vio.z);
+
+  setpoint_orientation_xyz(0) = pid_[0][1].update_filter(setpoint_velocity_(0) - vio.vx);
+  setpoint_orientation_xyz(1) = pid_[1][1].update_filter(setpoint_velocity_(1) - vio.vy);
+  setpoint_orientation_xyz(2) = pid_[2][1].update_filter(setpoint_velocity_(2) - vio.vz);
+
+  Eigen::Quaternionf quat(vio.q[0], vio.q[1], vio.q[2], vio.q[3]);
 
   // lock the mutex to protect our output variable
   std::lock_guard<std::mutex> lock(*output_mutex_);
 
   // Account for the change in orientation of the aircraft during its flight
-  setpoint_orientation_xyz = vio.quat.inverse() * setpoint_orientation_xyz;
+  setpoint_orientation_xyz = quat.inverse() * setpoint_orientation_xyz;
 
   // Convert to the Roll Pitch Yaw Coordinate System
   setpoint_orientation_ = XYZ_to_RollPitchThrottle_ * setpoint_orientation_xyz;
@@ -72,7 +78,7 @@ void PositionController::ReceiveVio(const VioData &vio) {
   }
 
   // Back out the yaw euler angle which is needed for reference
-  Eigen::Matrix3f rotation_mat = vio.quat.toRotationMatrix();
+  Eigen::Matrix3f rotation_mat = quat.toRotationMatrix();
   const float pitch = -asin(rotation_mat(2, 0));
   yaw_ = atan2(rotation_mat(1, 0) / cos(pitch), rotation_mat(0, 0) / cos(pitch));
 }

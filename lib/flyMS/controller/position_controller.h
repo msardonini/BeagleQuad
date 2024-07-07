@@ -16,6 +16,7 @@
 #include "Eigen/Dense"
 #include "flyMS/common/vio_data.h"
 #include "flyMS/controller/DigitalFilter.h"
+#include "mavlink_v2/common/mavlink.h"
 #include "yaml-cpp/yaml.h"
 
 namespace flyMS {
@@ -65,7 +66,7 @@ class PositionController {
    *
    * @param vio The estimated visual inertial odometry object
    */
-  void ReceiveVio(const VioData &vio);
+  void ReceiveVio(const mavlink_odometry_t &vio);
 
   /**
    * @brief Gets the current setpoint state and current yaw position
